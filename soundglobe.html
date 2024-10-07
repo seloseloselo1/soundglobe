@@ -13,12 +13,12 @@
             terrainProvider: Cesium.createWorldTerrain()
         });
 
-        // Enable zoom, pan, and tilt controls
+       
         viewer.scene.screenSpaceCameraController.enableZoom = true;
         viewer.scene.screenSpaceCameraController.enableRotate = true;
         viewer.scene.screenSpaceCameraController.enableTilt = true;
 
-        // Set initial view to a specific location
+        
         viewer.camera.setView({
             destination: Cesium.Cartesian3.fromDegrees(-123.0744619, 44.0503706, 5000)
         });

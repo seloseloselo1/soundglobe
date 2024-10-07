@@ -7,7 +7,7 @@
     <script src="https://cesium.com/downloads/cesiumjs/releases/1.88/Build/Cesium/Cesium.js"></script>
     <link href="https://cesium.com/downloads/cesiumjs/releases/1.88/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
     <style>
-        /* Ensure the container takes up the full screen */
+        /
         html, body, #cesiumContainer {
             width: 100%;
             height: 100%;
@@ -20,29 +20,28 @@
 <body>
     <div id="cesiumContainer"></div>
     <script>
-    
+        // Add your Cesium Ion access token here
         Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3YTg1ZGMwMi0xOWJmLTQ5YjUtODEwNy1hOTY3ZTUxMWM1NDEiLCJpZCI6MjQzNzY0LCJpYXQiOjE3MjgzMTIwNjJ9.CRdI9jfp87RV2SkRt30dJx-6fT2cgL-oBU4JfQME3YQ';
 
-
+        // Initialize the Cesium Viewer
         const viewer = new Cesium.Viewer('cesiumContainer', {
             terrainProvider: Cesium.createWorldTerrain(),
-            imageryProvider: new Cesium.IonImageryProvider({ assetId: 2 }),  // Default imagery
-            scene3DOnly: true,
-            requestRenderMode: true
+            imageryProvider: new Cesium.IonImageryProvider({ assetId: 2 }),  // Default imagery from Cesium Ion
+            scene3DOnly: true,  
+            requestRenderMode: true  // Improves performance by minimizing rendering
         });
 
-       
-        viewer.scene.debugShowFramesPerSecond = true;
-
-       
+        
         viewer.scene.screenSpaceCameraController.enableZoom = true;
         viewer.scene.screenSpaceCameraController.enableRotate = true;
         viewer.scene.screenSpaceCameraController.enableTilt = true;
 
         
-        viewer.camera.setView({
-            destination: Cesium.Cartesian3.fromDegrees(-123.0744619, 44.0503706, 5000)
-        });
+        function moveToUserLocation(lat, lon) {
+            viewer.camera.setView({
+                destination: Cesium.Cartesian3.fromDegrees(lon, lat, 1500)  // Adjust the altitude (height) as necessary
+            });
+        }
     </script>
 </body>
 </html>

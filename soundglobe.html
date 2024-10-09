@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-    <title>Cesium Globe</title>
+    <title>Cesium Globe with MapTiler Satellite</title>
     <script src="https://cesium.com/downloads/cesiumjs/releases/1.88/Build/Cesium/Cesium.js"></script>
     <link href="https://cesium.com/downloads/cesiumjs/releases/1.88/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
     <style>
-        /* Make sure the container takes up the full screen */
+        /* Full-screen Cesium container */
         html, body, #cesiumContainer {
             width: 100%;
             height: 100%;
@@ -20,15 +20,17 @@
 <body>
     <div id="cesiumContainer"></div>
     <script>
-        // Add your Cesium Ion access token here
+        // Your Cesium Ion access token
         Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3YTg1ZGMwMi0xOWJmLTQ5YjUtODEwNy1hOTY3ZTUxMWM1NDEiLCJpZCI6MjQzNzY0LCJpYXQiOjE3MjgzMTIwNjJ9.CRdI9jfp87RV2SkRt30dJx-6fT2cgL-oBU4JfQME3YQ';
 
-        // Initialize the Cesium Viewer
+        // Initialize the Cesium Viewer with MapTiler's Satellite Imagery
         const viewer = new Cesium.Viewer('cesiumContainer', {
             terrainProvider: Cesium.createWorldTerrain(),
-            imageryProvider: new Cesium.IonImageryProvider({ assetId: 2 }),  // Default imagery from Cesium Ion
-            scene3DOnly: true,  // Use 3D only
-            requestRenderMode: true  // Improve performance by minimizing rendering
+            imageryProvider: new Cesium.UrlTemplateImageryProvider({
+                url: 'https://api.maptiler.com/maps/satellite/{z}/{x}/{y}.jpg?key=ShPRyY6B8LKUCQNMYUx3'
+            }),
+            scene3DOnly: true,
+            requestRenderMode: true  // Improves performance by minimizing unnecessary rendering
         });
 
         // Enable zoom, rotate, and tilt controls
@@ -36,10 +38,11 @@
         viewer.scene.screenSpaceCameraController.enableRotate = true;
         viewer.scene.screenSpaceCameraController.enableTilt = true;
 
-        // Function to move the camera to the user's location
+        // Function to smoothly move the camera to the user's location
         function moveToUserLocation(lat, lon) {
-            viewer.camera.setView({
-                destination: Cesium.Cartesian3.fromDegrees(lon, lat, 1500)  // Adjust altitude (height) if necessary
+            viewer.camera.flyTo({
+                destination: Cesium.Cartesian3.fromDegrees(lon, lat, 1500),  // Adjust the altitude (height) as necessary
+                duration: 2  // Adjust for smooth zoom
             });
         }
     </script>

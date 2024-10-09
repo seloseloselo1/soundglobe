@@ -7,7 +7,6 @@
     <script src="https://cesium.com/downloads/cesiumjs/releases/1.88/Build/Cesium/Cesium.js"></script>
     <link href="https://cesium.com/downloads/cesiumjs/releases/1.88/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
     <style>
-        /* Full-screen Cesium container */
         html, body, #cesiumContainer {
             width: 100%;
             height: 100%;
@@ -30,7 +29,7 @@
                 url: 'https://api.maptiler.com/maps/satellite/{z}/{x}/{y}.jpg?key=ShPRyY6B8LKUCQNMYUx3'
             }),
             scene3DOnly: true,
-            requestRenderMode: true  // Improves performance by minimizing unnecessary rendering
+            requestRenderMode: true
         });
 
         // Enable zoom, rotate, and tilt controls
@@ -38,11 +37,11 @@
         viewer.scene.screenSpaceCameraController.enableRotate = true;
         viewer.scene.screenSpaceCameraController.enableTilt = true;
 
-        // Function to smoothly move the camera to the user's location
+        // Function to move the camera to the user's location
         function moveToUserLocation(lat, lon) {
             viewer.camera.flyTo({
-                destination: Cesium.Cartesian3.fromDegrees(lon, lat, 1500),  // Adjust the altitude (height) as necessary
-                duration: 2  // Adjust for smooth zoom
+                destination: Cesium.Cartesian3.fromDegrees(lon, lat, 1500),
+                duration: 2  // Smooth zoom
             });
         }
     </script>

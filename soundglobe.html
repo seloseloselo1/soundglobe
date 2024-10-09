@@ -21,14 +21,14 @@
     <div id="cesiumContainer"></div>
     <script>
         // Add your Cesium Ion access token here
-        Cesium.Ion.defaultAccessToken = 'your-cesium-ion-token-here';
+        Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3YTg1ZGMwMi0xOWJmLTQ5YjUtODEwNy1hOTY3ZTUxMWM1NDEiLCJpZCI6MjQzNzY0LCJpYXQiOjE3MjgzMTIwNjJ9.CRdI9jfp87RV2SkRt30dJx-6fT2cgL-oBU4JfQME3YQ';
 
         // Initialize the Cesium Viewer
         const viewer = new Cesium.Viewer('cesiumContainer', {
             terrainProvider: Cesium.createWorldTerrain(),
             imageryProvider: new Cesium.IonImageryProvider({ assetId: 2 }),  // Default imagery from Cesium Ion
-            scene3DOnly: true,  // We will only use 3D
-            requestRenderMode: true  // Improves performance by minimizing rendering
+            scene3DOnly: true,  // Use 3D only
+            requestRenderMode: true  // Improve performance by minimizing rendering
         });
 
         // Enable zoom, rotate, and tilt controls
@@ -38,9 +38,8 @@
 
         // Function to move the camera to the user's location
         function moveToUserLocation(lat, lon) {
-            console.log('Moving to:', lat, lon);  // Log the coordinates for debugging
             viewer.camera.setView({
-                destination: Cesium.Cartesian3.fromDegrees(lon, lat, 1500)  // Adjust the altitude (height) as necessary
+                destination: Cesium.Cartesian3.fromDegrees(lon, lat, 1500)  // Adjust altitude (height) if necessary
             });
         }
     </script>

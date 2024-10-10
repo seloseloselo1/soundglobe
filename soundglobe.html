@@ -32,27 +32,29 @@
             requestRenderMode: true,
             // Mobil cihazlar için zoom ve diğer hareketleri etkinleştirmek
             targetFrameRate: 60,  // Yüksek frame rate ile daha akıcı bir deneyim
-            selectionIndicator: false,  // Seçim göstergesini kapatalım
-            navigationHelpButton: false,  // Yardım butonunu kapatalım
-            fullscreenButton: false  // Fullscreen butonunu kapatalım
+            selectionIndicator: false,  // Seçim göstergesini kapat
+            navigationHelpButton: false,  // Yardım butonunu kapat
+            fullscreenButton: false,  // Fullscreen butonunu kapat
+            animation: false,  // Zaman kontrolleri kapalı
+            timeline: false,  // Timeline kapalı
+            baseLayerPicker: false  // Görüntü seçme kapalı
         });
 
-        // Zoom, döndürme ve eğme kontrollerini etkinleştir
-        viewer.scene.screenSpaceCameraController.enableZoom = true;
-        viewer.scene.screenSpaceCameraController.enableRotate = true;
-        viewer.scene.screenSpaceCameraController.enableTilt = true;
-        viewer.scene.screenSpaceCameraController.enableInputs = true;  // Tüm etkileşimleri etkinleştir
-
-        // Mobilde Pinch-to-Zoom ve diğer hareketlerin etkin olduğundan emin olun
-        viewer.scene.screenSpaceCameraController.inertiaZoom = 0.5;  // Daha yumuşak zoom hareketleri
-        viewer.scene.screenSpaceCameraController.inertiaSpin = 0.5;  // Daha yumuşak döndürme hareketleri
-        viewer.scene.screenSpaceCameraController.inertiaTranslate = 0.5;  // Daha yumuşak kaydırma hareketleri
+        // iPhone'da Pinch-to-Zoom ve diğer dokunmatik hareketlerin düzgün çalıştığından emin olun
+        viewer.scene.screenSpaceCameraController.inertiaZoom = 0.5;  // Zoom hareketi yumuşatıldı
+        viewer.scene.screenSpaceCameraController.inertiaSpin = 0.5;  // Döndürme hareketi yumuşatıldı
+        viewer.scene.screenSpaceCameraController.inertiaTranslate = 0.5;  // Kaydırma hareketi yumuşatıldı
+        viewer.scene.screenSpaceCameraController.zoomEventTypes = [Cesium.CameraEventType.WHEEL, Cesium.CameraEventType.PINCH];  // Zoom için tekerlek ve pinch olaylarını etkinleştir
+        viewer.scene.screenSpaceCameraController.enableRotate = true;  // Döndürmeyi etkinleştir
+        viewer.scene.screenSpaceCameraController.enableZoom = true;  // Zoom yapmayı etkinleştir
+        viewer.scene.screenSpaceCameraController.enableTilt = true;  // Eğmeyi etkinleştir
+        viewer.scene.screenSpaceCameraController.enableInputs = true;  // Tüm dokunma hareketleri etkin
 
         // Zoom sınırlarını ayarla
-        viewer.scene.screenSpaceCameraController.minimumZoomDistance = 500;
-        viewer.scene.screenSpaceCameraController.maximumZoomDistance = 10000;
+        viewer.scene.screenSpaceCameraController.minimumZoomDistance = 100;  // Daha fazla yakınlaştırma için minimum mesafe ayarı
+        viewer.scene.screenSpaceCameraController.maximumZoomDistance = 50000000;  // Çok uzaktan bakmayı engellemek için maksimum mesafe
 
-        // Konuma bir pin (marker) ekle
+        // Kullanıcının konumuna bir pin (marker) ekle
         function placeMarkerAtLocation(lat, lon) {
             viewer.entities.add({
                 position: Cesium.Cartesian3.fromDegrees(lon, lat),
@@ -65,9 +67,9 @@
             });
         }
 
-        // JavaScript'te konum güncellenirken bu fonksiyon çağrılacak
+        // Kullanıcı konumunu ayarlama
         function moveToUserLocation(lat, lon) {
-            // Kamerayı konuma kilitleme, sadece pin ekle
+            // Kullanıcı konumuna gidip kamerayı kilitlemeden sadece pin ekliyoruz
             placeMarkerAtLocation(lat, lon);
         }
     </script>

@@ -19,7 +19,7 @@
 <body>
     <div id="cesiumContainer"></div>
     <script>
-       
+        // Cesium erişim anahtarınız
         Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3YTg1ZGMwMi0xOWJmLTQ5YjUtODEwNy1hOTY3ZTUxMWM1NDEiLCJpZCI6MjQzNzY0LCJpYXQiOjE3MjgzMTIwNjJ9.CRdI9jfp87RV2SkRt30dJx-6fT2cgL-oBU4JfQME3YQ';
 
         // Cesium görüntüleyici başlat
@@ -29,7 +29,12 @@
                 url: 'https://api.maptiler.com/maps/satellite/{z}/{x}/{y}.jpg?key=ShPRyY6B8LKUCQNMYUx3'
             }),
             scene3DOnly: true,
-            requestRenderMode: true
+            requestRenderMode: true,
+            // Mobil cihazlar için zoom ve diğer hareketleri etkinleştirmek
+            targetFrameRate: 60,  // Yüksek frame rate ile daha akıcı bir deneyim
+            selectionIndicator: false,  // Seçim göstergesini kapatalım
+            navigationHelpButton: false,  // Yardım butonunu kapatalım
+            fullscreenButton: false  // Fullscreen butonunu kapatalım
         });
 
         // Zoom, döndürme ve eğme kontrollerini etkinleştir
@@ -37,6 +42,11 @@
         viewer.scene.screenSpaceCameraController.enableRotate = true;
         viewer.scene.screenSpaceCameraController.enableTilt = true;
         viewer.scene.screenSpaceCameraController.enableInputs = true;  // Tüm etkileşimleri etkinleştir
+
+        // Mobilde Pinch-to-Zoom ve diğer hareketlerin etkin olduğundan emin olun
+        viewer.scene.screenSpaceCameraController.inertiaZoom = 0.5;  // Daha yumuşak zoom hareketleri
+        viewer.scene.screenSpaceCameraController.inertiaSpin = 0.5;  // Daha yumuşak döndürme hareketleri
+        viewer.scene.screenSpaceCameraController.inertiaTranslate = 0.5;  // Daha yumuşak kaydırma hareketleri
 
         // Zoom sınırlarını ayarla
         viewer.scene.screenSpaceCameraController.minimumZoomDistance = 500;

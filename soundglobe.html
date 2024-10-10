@@ -20,16 +20,16 @@
     <div id="cesiumContainer"></div>
     <script>
         // Cesium erişim anahtarınız
-        Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2YTZjMDQ2MS04ZWQwLTQ0ZmEtYTMyZC1kOTVlYTQ0NTZhNjciLCJpZCI6MjQzNzY0LCJpYXQiOjE3Mjg1NjI0ODN9.YlVn-WGvPjuClNcHtIomZYN8gw8TAohDS5BPb5MTWgE';
+        Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2YTZjMDQ2MS04ZWQwLTQ0ZmEtYTMyZC1kOTVlYTQ0NTZhNjciLCJpZCI6MjQzNzY0LCJpYXQiOjE3Mjg1NjI0ODN9.YlVn-WGvPjuClNcHtIomZYN8gw8TAohDS5BPb5MTWgE';  // Cesium Access Token
 
         // MapTiler API anahtarınız
-        const apiKey = 'ShPRyY6B8LKUCQNMYUx3';
+        const apiKey = 'ShPRyY6B8LKUCQNMYUx3';  // MapTiler API Key
 
         // Cesium görüntüleyici başlat (Uydu görüntüsü ile)
         const viewer = new Cesium.Viewer('cesiumContainer', {
             imageryProvider: new Cesium.UrlTemplateImageryProvider({
                 url: `https://api.maptiler.com/maps/satellite/{z}/{x}/{y}.jpg?key=${apiKey}`,
-                credit: 'MapTiler'
+                credit: 'MapTiler'  // Uydu görüntüsü katmanı
             }),
             scene3DOnly: true,
             requestRenderMode: true
@@ -38,30 +38,19 @@
         // Sokak isimleri ve yollar için ikinci katman ekle (streets)
         viewer.imageryLayers.addImageryProvider(new Cesium.UrlTemplateImageryProvider({
             url: `https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=${apiKey}`,
-            credit: 'MapTiler'
+            credit: 'MapTiler'  // Sokak isimleri katmanı
         }));
 
-        // Zoom yaparken ve dönerken kaymaları engellemek için inertia (atalet) ayarlarını kapat
+        // Zoom ve diğer kaymalar için atalet etkilerini kapatalım
         viewer.scene.screenSpaceCameraController.inertiaZoom = 0.0;
         viewer.scene.screenSpaceCameraController.inertiaSpin = 0.0;
         viewer.scene.screenSpaceCameraController.inertiaTranslate = 0.0;
 
-        // Zoom sınırlarını ayarla
+        // Zoom sınırlarını ayarla (bu, zoom in/out davranışını optimize eder)
         viewer.scene.screenSpaceCameraController.minimumZoomDistance = 100;
-        viewer.scene.screenSpaceCameraController.maximumZoomDistance = 5000000; // Maximum mesafeyi optimize ettik
+        viewer.scene.screenSpaceCameraController.maximumZoomDistance = 5000000;  // Optimize edilmiş zoom
 
-        // Kullanıcının mevcut zoom seviyesini kontrol etmek için değişken
-        let currentZoom = 5000000;  // Varsayılan zoom mesafesi
-
-        // Kamerayı iki kere tıklama ile zoom out yapma
-        viewer.screenSpaceEventHandler.setInputAction(function() {
-            currentZoom += 1000000;  // Zoom out işlemi
-            viewer.camera.flyTo({
-                destination: Cesium.Cartesian3.fromDegrees(0, 0, currentZoom) // Zoom out mesafesi artırılır
-            });
-        }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
-
-        // Kullanıcı konumuna bir pin (marker) ekle
+        // Kullanıcının konumuna pin ekle
         function placeMarkerAtLocation(lat, lon) {
             viewer.entities.add({
                 position: Cesium.Cartesian3.fromDegrees(lon, lat),
@@ -74,15 +63,16 @@
             });
         }
 
-        // Kamerayı sabitlemek için başlangıçta belirli bir yere odaklanma (örneğin İstanbul)
+        // Kamerayı sabitlemek ve hareket ettirmek için
         function moveToUserLocation(lat, lon) {
             viewer.camera.flyTo({
-                destination: Cesium.Cartesian3.fromDegrees(lon, lat, 50000) // Kullanıcı konumunda başlat
+                destination: Cesium.Cartesian3.fromDegrees(lon, lat, 50000)  // Kullanıcı konumunda zoom ve pin
             });
             placeMarkerAtLocation(lat, lon);
         }
 
-        moveToUserLocation(41.0082, 28.9784);  // İstanbul konumu
+        // Başlangıçta varsayılan konum
+        moveToUserLocation(41.0082, 28.9784);  // Örnek olarak İstanbul konumu
     </script>
 </body>
 </html>

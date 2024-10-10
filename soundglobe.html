@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, minimum-scale=0.5, maximum-scale=3.0">
-    <title>Cesium Globe with MapTiler Satellite</title>
+    <title>Cesium Globe with Satellite and Streets Overlay</title>
     <script src="https://cesium.com/downloads/cesiumjs/releases/1.88/Build/Cesium/Cesium.js"></script>
     <link href="https://cesium.com/downloads/cesiumjs/releases/1.88/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
     <style>
@@ -22,45 +22,46 @@
         // Cesium erişim anahtarınız
         Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2YTZjMDQ2MS04ZWQwLTQ0ZmEtYTMyZC1kOTVlYTQ0NTZhNjciLCJpZCI6MjQzNzY0LCJpYXQiOjE3Mjg1NjI0ODN9.YlVn-WGvPjuClNcHtIomZYN8gw8TAohDS5BPb5MTWgE';
 
-        // Cesium görüntüleyici başlat
+        // MapTiler API anahtarınız
+        const apiKey = 'ShPRyY6B8LKUCQNMYUx3';
+
+        // Cesium görüntüleyici başlat (Uydu görüntüsü ile)
         const viewer = new Cesium.Viewer('cesiumContainer', {
-            terrainProvider: Cesium.createWorldTerrain(),
             imageryProvider: new Cesium.UrlTemplateImageryProvider({
-                url: 'https://api.maptiler.com/maps/satellite/{z}/{x}/{y}.jpg?key=ShPRyY6B8LKUCQNMYUx3'
+                url: `https://api.maptiler.com/maps/satellite/{z}/{x}/{y}.jpg?key=${apiKey}`,
+                credit: 'MapTiler'
             }),
             scene3DOnly: true,
-            requestRenderMode: true,
-            // Mobil cihazlar için zoom ve diğer hareketleri etkinleştirmek
-            targetFrameRate: 60,  // Yüksek frame rate ile daha akıcı bir deneyim
-            selectionIndicator: false,  // Seçim göstergesini kapat
-            navigationHelpButton: false,  // Yardım butonunu kapat
-            fullscreenButton: false,  // Fullscreen butonunu kapat
-            animation: false,  // Zaman kontrolleri kapalı
-            timeline: false,  // Timeline kapalı
-            baseLayerPicker: false  // Görüntü seçme kapalı
+            requestRenderMode: true
         });
 
-        // iPhone'da Pinch-to-Zoom ve diğer dokunmatik hareketlerin düzgün çalıştığından emin olun
-        viewer.scene.screenSpaceCameraController.inertiaZoom = 0.5;  // Zoom hareketi yumuşatıldı
-        viewer.scene.screenSpaceCameraController.inertiaSpin = 0.5;  // Döndürme hareketi yumuşatıldı
-        viewer.scene.screenSpaceCameraController.inertiaTranslate = 0.5;  // Kaydırma hareketi yumuşatıldı
-        viewer.scene.screenSpaceCameraController.zoomEventTypes = [Cesium.CameraEventType.WHEEL, Cesium.CameraEventType.PINCH];  // Zoom için tekerlek ve pinch olaylarını etkinleştir
-        viewer.scene.screenSpaceCameraController.enableRotate = true;  // Döndürmeyi etkinleştir
-        viewer.scene.screenSpaceCameraController.enableZoom = true;  // Zoom yapmayı etkinleştir
-        viewer.scene.screenSpaceCameraController.enableTilt = true;  // Eğmeyi etkinleştir
-        viewer.scene.screenSpaceCameraController.enableInputs = true;  // Tüm dokunma hareketleri etkin
+        // Sokak isimleri ve yollar için ikinci katman ekle (streets)
+        viewer.imageryLayers.addImageryProvider(new Cesium.UrlTemplateImageryProvider({
+            url: `https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=${apiKey}`,
+            credit: 'MapTiler'
+        }));
+
+        // Zoom yaparken ve dönerken kaymaları engellemek için inertia (atalet) ayarlarını kapat
+        viewer.scene.screenSpaceCameraController.inertiaZoom = 0.0;
+        viewer.scene.screenSpaceCameraController.inertiaSpin = 0.0;
+        viewer.scene.screenSpaceCameraController.inertiaTranslate = 0.0;
+
+        // Dokunmatik hareketleri etkinleştir
+        viewer.scene.screenSpaceCameraController.enableZoom = true;
+        viewer.scene.screenSpaceCameraController.enableRotate = true;
+        viewer.scene.screenSpaceCameraController.enableTilt = true;
 
         // Zoom sınırlarını ayarla
-        viewer.scene.screenSpaceCameraController.minimumZoomDistance = 100;  // Daha fazla yakınlaştırma için minimum mesafe ayarı
-        viewer.scene.screenSpaceCameraController.maximumZoomDistance = 50000000;  // Çok uzaktan bakmayı engellemek için maksimum mesafe
+        viewer.scene.screenSpaceCameraController.minimumZoomDistance = 100;
+        viewer.scene.screenSpaceCameraController.maximumZoomDistance = 50000000;
 
-        // Kullanıcının konumuna bir pin (marker) ekle
+        // Kullanıcı konumuna gidip kamerayı kilitlemeden sadece pin ekliyoruz
         function placeMarkerAtLocation(lat, lon) {
             viewer.entities.add({
                 position: Cesium.Cartesian3.fromDegrees(lon, lat),
                 point: {
-                    pixelSize: 10,  // Pin büyüklüğü
-                    color: Cesium.Color.RED,  // Pin rengi
+                    pixelSize: 10,
+                    color: Cesium.Color.RED,
                     outlineColor: Cesium.Color.WHITE,
                     outlineWidth: 2
                 }
@@ -69,7 +70,6 @@
 
         // Kullanıcı konumunu ayarlama
         function moveToUserLocation(lat, lon) {
-            // Kullanıcı konumuna gidip kamerayı kilitlemeden sadece pin ekliyoruz
             placeMarkerAtLocation(lat, lon);
         }
     </script>

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, minimum-scale=1.0, maximum-scale=5.0">
     <title>Cesium Globe with MapTiler Satellite</title>
     <script src="https://cesium.com/downloads/cesiumjs/releases/1.88/Build/Cesium/Cesium.js"></script>
     <link href="https://cesium.com/downloads/cesiumjs/releases/1.88/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
@@ -19,7 +19,7 @@
 <body>
     <div id="cesiumContainer"></div>
     <script>
-        // Your Cesium Ion access token
+       
         Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3YTg1ZGMwMi0xOWJmLTQ5YjUtODEwNy1hOTY3ZTUxMWM1NDEiLCJpZCI6MjQzNzY0LCJpYXQiOjE3MjgzMTIwNjJ9.CRdI9jfp87RV2SkRt30dJx-6fT2cgL-oBU4JfQME3YQ';
 
         // Initialize the Cesium Viewer with MapTiler's Satellite Imagery
@@ -36,11 +36,13 @@
         viewer.scene.screenSpaceCameraController.enableZoom = true;
         viewer.scene.screenSpaceCameraController.enableRotate = true;
         viewer.scene.screenSpaceCameraController.enableTilt = true;
+        viewer.scene.screenSpaceCameraController.enableInputs = true;  // Enable all interactions
 
         // Function to move the camera to the user's location
         function moveToUserLocation(lat, lon) {
+            const currentHeight = viewer.camera.positionCartographic.height;  // Keep current zoom level
             viewer.camera.flyTo({
-                destination: Cesium.Cartesian3.fromDegrees(lon, lat, 1500),
+                destination: Cesium.Cartesian3.fromDegrees(lon, lat, currentHeight),
                 duration: 2  // Smooth zoom
             });
         }

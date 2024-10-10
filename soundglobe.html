@@ -19,10 +19,10 @@
 <body>
     <div id="cesiumContainer"></div>
     <script>
-        
+       
         Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3YTg1ZGMwMi0xOWJmLTQ5YjUtODEwNy1hOTY3ZTUxMWM1NDEiLCJpZCI6MjQzNzY0LCJpYXQiOjE3MjgzMTIwNjJ9.CRdI9jfp87RV2SkRt30dJx-6fT2cgL-oBU4JfQME3YQ';
 
-        
+        // Cesium görüntüleyici başlat
         const viewer = new Cesium.Viewer('cesiumContainer', {
             terrainProvider: Cesium.createWorldTerrain(),
             imageryProvider: new Cesium.UrlTemplateImageryProvider({
@@ -42,19 +42,23 @@
         viewer.scene.screenSpaceCameraController.minimumZoomDistance = 500;
         viewer.scene.screenSpaceCameraController.maximumZoomDistance = 10000;
 
-        // Kullanıcının konumuna hareket etme fonksiyonu
-        function moveToUserLocation(lat, lon) {
-            const camera = viewer.camera;
-            const currentHeight = camera.positionCartographic.height;  // Mevcut zoom seviyesini al
-
-            // Kamera kilitlenmemesi için flyTo fonksiyonunu düzenledik
-            camera.flyTo({
-                destination: Cesium.Cartesian3.fromDegrees(lon, lat, currentHeight),
-                duration: 2,  // Yumuşak zoom
-                complete: function () {
-                    viewer.scene.screenSpaceCameraController.enableInputs = true; // Kamera kontrollerini tekrar etkinleştir
+        // Konuma bir pin (marker) ekle
+        function placeMarkerAtLocation(lat, lon) {
+            viewer.entities.add({
+                position: Cesium.Cartesian3.fromDegrees(lon, lat),
+                point: {
+                    pixelSize: 10,  // Pin büyüklüğü
+                    color: Cesium.Color.RED,  // Pin rengi
+                    outlineColor: Cesium.Color.WHITE,
+                    outlineWidth: 2
                 }
             });
+        }
+
+        // JavaScript'te konum güncellenirken bu fonksiyon çağrılacak
+        function moveToUserLocation(lat, lon) {
+            // Kamerayı konuma kilitleme, sadece pin ekle
+            placeMarkerAtLocation(lat, lon);
         }
     </script>
 </body>

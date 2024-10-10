@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, minimum-scale=0.5, maximum-scale=3.0">
-    <title>Cesium Globe with Satellite and Streets Overlay</title>
+    <title>Cesium Globe with Satellite View</title>
     <script src="https://cesium.com/downloads/cesiumjs/releases/1.88/Build/Cesium/Cesium.js"></script>
     <link href="https://cesium.com/downloads/cesiumjs/releases/1.88/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
     <style>
@@ -20,59 +20,39 @@
     <div id="cesiumContainer"></div>
     <script>
         // Cesium erişim anahtarınız
-        Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2YTZjMDQ2MS04ZWQwLTQ0ZmEtYTMyZC1kOTVlYTQ0NTZhNjciLCJpZCI6MjQzNzY0LCJpYXQiOjE3Mjg1NjI0ODN9.YlVn-WGvPjuClNcHtIomZYN8gw8TAohDS5BPb5MTWgE';  // Cesium Access Token
+        Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2YTZjMDQ2MS04ZWQwLTQ0ZmEtYTMyZC1kOTVlYTQ0NTZhNjciLCJpZCI6MjQzNzY0LCJpYXQiOjE3Mjg1NjI0ODN9.YlVn-WGvPjuClNcHtIomZYN8gw8TAohDS5BPb5MTWgE';  // Kendi Cesium token'ınızı ekleyin.
 
-        // MapTiler API anahtarınız
-        const apiKey = 'ShPRyY6B8LKUCQNMYUx3';  // MapTiler API Key
+        // MapTiler API anahtarınız (sadece uydu görüntüsü)
+        const apiKey = 'ShPRyY6B8LKUCQNMYUx3';  // MapTiler API anahtarınızı buraya ekleyin.
 
-        // Cesium görüntüleyici başlat (Uydu görüntüsü ile)
+        // Cesium görüntüleyici başlat (sadece uydu görüntüsü ile)
         const viewer = new Cesium.Viewer('cesiumContainer', {
             imageryProvider: new Cesium.UrlTemplateImageryProvider({
                 url: `https://api.maptiler.com/maps/satellite/{z}/{x}/{y}.jpg?key=${apiKey}`,
                 credit: 'MapTiler'  // Uydu görüntüsü katmanı
             }),
-            scene3DOnly: true,
-            requestRenderMode: true
+            scene3DOnly: true,  // Sadece 3D dünya
+            requestRenderMode: true,  // Kaynak tasarrufu
+            animation: false,  // Zaman kontrollerini kapat
+            timeline: false,  // Timeline'ı devre dışı bırak
+            fullscreenButton: false,  // Fullscreen butonu kapat
+            navigationHelpButton: false  // Yardım butonunu kapat
         });
-
-        // Sokak isimleri ve yollar için ikinci katman ekle (streets)
-        viewer.imageryLayers.addImageryProvider(new Cesium.UrlTemplateImageryProvider({
-            url: `https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=${apiKey}`,
-            credit: 'MapTiler'  // Sokak isimleri katmanı
-        }));
 
         // Zoom ve diğer kaymalar için atalet etkilerini kapatalım
         viewer.scene.screenSpaceCameraController.inertiaZoom = 0.0;
         viewer.scene.screenSpaceCameraController.inertiaSpin = 0.0;
         viewer.scene.screenSpaceCameraController.inertiaTranslate = 0.0;
 
-        // Zoom sınırlarını ayarla (bu, zoom in/out davranışını optimize eder)
+        // Zoom sınırlarını ayarla (doğal zoom hareketi sağlamak için)
         viewer.scene.screenSpaceCameraController.minimumZoomDistance = 100;
-        viewer.scene.screenSpaceCameraController.maximumZoomDistance = 5000000;  // Optimize edilmiş zoom
+        viewer.scene.screenSpaceCameraController.maximumZoomDistance = 50000000;  // Optimize edilmiş zoom
 
-        // Kullanıcının konumuna pin ekle
-        function placeMarkerAtLocation(lat, lon) {
-            viewer.entities.add({
-                position: Cesium.Cartesian3.fromDegrees(lon, lat),
-                point: {
-                    pixelSize: 10,
-                    color: Cesium.Color.RED,
-                    outlineColor: Cesium.Color.WHITE,
-                    outlineWidth: 2
-                }
-            });
-        }
+        // Kamera başlangıç konumunu belirlemek
+        viewer.camera.flyTo({
+            destination: Cesium.Cartesian3.fromDegrees(0, 0, 5000000)  // Dünya merkezine başlangıç konumu
+        });
 
-        // Kamerayı sabitlemek ve hareket ettirmek için
-        function moveToUserLocation(lat, lon) {
-            viewer.camera.flyTo({
-                destination: Cesium.Cartesian3.fromDegrees(lon, lat, 50000)  // Kullanıcı konumunda zoom ve pin
-            });
-            placeMarkerAtLocation(lat, lon);
-        }
-
-        // Başlangıçta varsayılan konum
-        moveToUserLocation(41.0082, 28.9784);  // Örnek olarak İstanbul konumu
     </script>
 </body>
 </html>

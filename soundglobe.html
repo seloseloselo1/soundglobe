@@ -22,7 +22,7 @@
         
         Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3YTg1ZGMwMi0xOWJmLTQ5YjUtODEwNy1hOTY3ZTUxMWM1NDEiLCJpZCI6MjQzNzY0LCJpYXQiOjE3MjgzMTIwNjJ9.CRdI9jfp87RV2SkRt30dJx-6fT2cgL-oBU4JfQME3YQ';
 
-       
+        
         const viewer = new Cesium.Viewer('cesiumContainer', {
             terrainProvider: Cesium.createWorldTerrain(),
             imageryProvider: new Cesium.UrlTemplateImageryProvider({
@@ -44,10 +44,16 @@
 
         // Kullanıcının konumuna hareket etme fonksiyonu
         function moveToUserLocation(lat, lon) {
-            const currentHeight = viewer.camera.positionCartographic.height;  // Mevcut zoom seviyesini al
-            viewer.camera.flyTo({
+            const camera = viewer.camera;
+            const currentHeight = camera.positionCartographic.height;  // Mevcut zoom seviyesini al
+
+            // Kamera kilitlenmemesi için flyTo fonksiyonunu düzenledik
+            camera.flyTo({
                 destination: Cesium.Cartesian3.fromDegrees(lon, lat, currentHeight),
-                duration: 2  // Yumuşak zoom
+                duration: 2,  // Yumuşak zoom
+                complete: function () {
+                    viewer.scene.screenSpaceCameraController.enableInputs = true; // Kamera kontrollerini tekrar etkinleştir
+                }
             });
         }
     </script>
